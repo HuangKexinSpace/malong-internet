@@ -11,6 +11,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_origins=["https://aidealmalong.zeabur.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
