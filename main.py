@@ -10,7 +10,6 @@ app = FastAPI()
 # 开启 CORS，允许 Web 端访问
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
     allow_origins=["https://aidealmalong.zeabur.app"],
     allow_methods=["*"],
     allow_headers=["*"],
