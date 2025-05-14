@@ -4,49 +4,40 @@
   <meta charset="UTF-8" />
   <title>实验控制面板</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-    .top-row {
-      display: flex;
-      gap: 12px;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .container { display: flex; flex-direction: column; gap: 16px; }
+    .top-row, .unlock-row { display: flex; gap: 12px; }
     .sub-group {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-left: 0; /* 与“开始实验”对齐 */
+      align-items: flex-start; /* 防止按钮横向拉满 */
     }
-    .big-button {
-      font-size: 1.4em;
-      padding: 12px 24px;
-    }
-    .small-button {
-      font-size: 1em;
-      padding: 8px 16px;
-    }
+    .big-button   { font-size: 1.4em; padding: 12px 24px; }
+    .small-button { font-size: 1em;   padding: 8px 16px; }
   </style>
 </head>
 <body>
   <h1>实验控制面板</h1>
   <div class="container">
-    <!-- 第一行：三个放大的按钮 -->
+    <!-- 第一行大按钮 -->
     <div class="top-row">
-      <button id="btn-start" class="big-button">开始实验</button>
-      <button id="btn-student-review" class="big-button">学生众评</button>
-      <button id="btn-theory" class="big-button">理论题目</button>
+      <button id="btn-start"         class="big-button">开始实验</button>
+      <button id="btn-student-review"class="big-button">学生众评</button>
+      <button id="btn-theory"        class="big-button">理论题目</button>
     </div>
-    <!-- 第二组：放在“开始实验”下方的两个按钮 -->
+    <!-- 第二行小按钮，不再拉满宽度 -->
     <div class="sub-group">
-      <button id="btn-hand" class="small-button">举手</button>
+      <button id="btn-hand"      class="small-button">举手</button>
       <button id="btn-recommend" class="small-button">推荐众评学生</button>
+    </div>
+    <!-- 第三行：解锁 A 视图对 -->
+    <h2>手动解锁视图</h2>
+    <div class="unlock-row">
+      <button id="btn-unlock0" class="small-button">学生1 完成</button>
+      <button id="btn-unlock1" class="small-button">学生2 完成</button>
+      <button id="btn-unlock2" class="small-button">学生3 完成</button>
+      <button id="btn-unlock3" class="small-button">学生4 完成</button>
     </div>
   </div>
 
@@ -55,18 +46,18 @@
 
     async function sendCommand(cmd) {
       try {
-        const res = await fetch(`${SERVER_URL}/send_command`, {
+        await fetch(`${SERVER_URL}/send_command`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ command: cmd })
         });
-        if (!res.ok) throw new Error(res.statusText);
         console.log(`✔ 已发送命令: ${cmd}`);
       } catch (e) {
         console.error('✘ 发送失败', e);
       }
     }
 
+    // 实验控制
     document.getElementById('btn-start')
       .addEventListener('click', () => sendCommand('start_experiment'));
     document.getElementById('btn-student-review')
@@ -77,6 +68,16 @@
       .addEventListener('click', () => sendCommand('hand_raise'));
     document.getElementById('btn-recommend')
       .addEventListener('click', () => sendCommand('recommend_student'));
+
+    // 手动解锁视图对
+    document.getElementById('btn-unlock0')
+      .addEventListener('click', () => sendCommand('unlock0'));
+    document.getElementById('btn-unlock1')
+      .addEventListener('click', () => sendCommand('unlock1'));
+    document.getElementById('btn-unlock2')
+      .addEventListener('click', () => sendCommand('unlock2'));
+    document.getElementById('btn-unlock3')
+      .addEventListener('click', () => sendCommand('unlock3'));
   </script>
 </body>
 </html>
