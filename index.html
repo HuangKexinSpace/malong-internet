@@ -5,61 +5,69 @@
   <title>实验控制面板</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
-    .container { display: flex; flex-direction: column; gap: 16px; }
-    .top-row, .unlock-row, .timer-row { display: flex; gap: 12px; }
-    .sub-group {
+    h1 { margin-bottom: 10px; }
+    h2 { margin-top: 30px; }
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+    .button-row {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
     .big-button   { font-size: 1.4em; padding: 12px 24px; }
     .small-button { font-size: 1em;   padding: 8px 16px; }
   </style>
 </head>
 <body>
-  <h1>实验控制面板</h1>
-  <div class="container">
-
-    <!-- 第一行大按钮：场景切换 -->
-    <div class="top-row">
+  
+  <!-- 教师端面板 -->
+  <div class="section">
+    <h1>教师端简易操作面板</h1>
+    <div class="button-row">
       <button id="btn-start"          class="big-button">开始实验</button>
       <button id="btn-student-review" class="big-button">学生众评</button>
       <button id="btn-theory"         class="big-button">理论题目</button>
     </div>
-
-    <!-- 第二组：场景1 内部操作 -->
-    <div class="sub-group">
-      <button id="btn-hand"      class="small-button">举手</button>
+    <div class="button-row">
       <button id="btn-recommend" class="small-button">推荐众评学生</button>
     </div>
+  </div>
 
-    <!-- 第三行：手动解锁 A 视图对 -->
-    <h2>手动解锁视图</h2>
-    <div class="unlock-row">
+  <!-- 学生端面板 -->
+  <div class="section">
+    <h1>学生端简易操作面板</h1>
+    <div class="button-row">
       <button id="btn-unlock0" class="small-button">学生1 完成</button>
       <button id="btn-unlock1" class="small-button">学生2 完成</button>
       <button id="btn-unlock2" class="small-button">学生3 完成</button>
       <button id="btn-unlock3" class="small-button">学生4 完成</button>
     </div>
-
-    <!-- 新增：倒计时显示触发 -->
-    <h2>倒计时弹出</h2>
-    <div class="timer-row">
-      <button id="btn-scene1-show"  class="small-button">Scene1 倒计时</button>
-      <button id="btn-scene2-show"  class="small-button">Scene2 倒计时</button>
-      <button id="btn-scene3-show1" class="small-button">Scene3 倒计时①</button>
-      <button id="btn-scene3-show2" class="small-button">Scene3 倒计时②</button>
+    <div class="button-row">
+      <button id="btn-hand" class="small-button">举手</button>
     </div>
+  </div>
 
+  <!-- 大模型分析弹窗 -->
+  <div class="section">
+    <h1>大模型分析弹窗</h1>
+    <div class="button-row">
+      <button id="btn-scene1-show"  class="small-button">实验中弹窗</button>
+      <button id="btn-scene2-show"  class="small-button">众评弹窗</button>
+      <button id="btn-scene3-show1" class="small-button">理论题目弹窗</button>
+      <button id="btn-scene3-show2" class="small-button">课程总结</button>
+    </div>
   </div>
 
   <script>
-    const SERVER_URL = 'https://aidealmalong.zeabur.app';
+    const SERVER_URL = 'http://127.0.0.1:8000';
 
     async function sendCommand(cmd) {
       try {
-        const res = await fetch(`${SERVER_URL}/send_command`, {
+        await fetch(`${SERVER_URL}/send_command`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ command: cmd })
@@ -70,39 +78,24 @@
       }
     }
 
-    // 场景切换
-    document.getElementById('btn-start')
-      .addEventListener('click', () => sendCommand('start_experiment'));
-    document.getElementById('btn-student-review')
-      .addEventListener('click', () => sendCommand('student_review'));
-    document.getElementById('btn-theory')
-      .addEventListener('click', () => sendCommand('theoretical_question'));
+    // 教师端
+    document.getElementById('btn-start').addEventListener('click', () => sendCommand('start_experiment'));
+    document.getElementById('btn-student-review').addEventListener('click', () => sendCommand('student_review'));
+    document.getElementById('btn-theory').addEventListener('click', () => sendCommand('theoretical_question'));
+    document.getElementById('btn-recommend').addEventListener('click', () => sendCommand('recommend_student'));
 
-    // 场景1 内部操作
-    document.getElementById('btn-hand')
-      .addEventListener('click', () => sendCommand('hand_raise'));
-    document.getElementById('btn-recommend')
-      .addEventListener('click', () => sendCommand('recommend_student'));
+    // 学生端
+    document.getElementById('btn-hand').addEventListener('click', () => sendCommand('hand_raise'));
+    document.getElementById('btn-unlock0').addEventListener('click', () => sendCommand('unlock0'));
+    document.getElementById('btn-unlock1').addEventListener('click', () => sendCommand('unlock1'));
+    document.getElementById('btn-unlock2').addEventListener('click', () => sendCommand('unlock2'));
+    document.getElementById('btn-unlock3').addEventListener('click', () => sendCommand('unlock3'));
 
-    // 解锁视图对
-    document.getElementById('btn-unlock0')
-      .addEventListener('click', () => sendCommand('unlock0'));
-    document.getElementById('btn-unlock1')
-      .addEventListener('click', () => sendCommand('unlock1'));
-    document.getElementById('btn-unlock2')
-      .addEventListener('click', () => sendCommand('unlock2'));
-    document.getElementById('btn-unlock3')
-      .addEventListener('click', () => sendCommand('unlock3'));
-
-    // 倒计时弹出触发
-    document.getElementById('btn-scene1-show')
-      .addEventListener('click', () => sendCommand('scene1_show'));
-    document.getElementById('btn-scene2-show')
-      .addEventListener('click', () => sendCommand('scene2_show'));
-    document.getElementById('btn-scene3-show1')
-      .addEventListener('click', () => sendCommand('scene3_show1'));
-    document.getElementById('btn-scene3-show2')
-      .addEventListener('click', () => sendCommand('scene3_show2'));
+    // 大模型分析弹窗
+    document.getElementById('btn-scene1-show').addEventListener('click', () => sendCommand('scene1_show'));
+    document.getElementById('btn-scene2-show').addEventListener('click', () => sendCommand('scene2_show'));
+    document.getElementById('btn-scene3-show1').addEventListener('click', () => sendCommand('scene3_show1'));
+    document.getElementById('btn-scene3-show2').addEventListener('click', () => sendCommand('scene3_show2'));
   </script>
 </body>
 </html>
