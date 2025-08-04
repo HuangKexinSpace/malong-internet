@@ -63,7 +63,7 @@
   </div>
 
   <script>
-    const SERVER_URL = 'http://127.0.0.1:8000';
+    const SERVER_URL = window.location.origin; // 获取当前页面的服务器地址
 
     async function sendCommand(cmd) {
       try {
